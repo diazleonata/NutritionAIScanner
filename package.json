@@ -1,7 +1,7 @@
 {
   "name": "nutritionaiscanner",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "0.4",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
@@ -38,7 +38,8 @@
     "react-native-tab-view": "^4.1.1",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
-    "expo-camera": "~16.1.8"
+    "expo-camera": "~16.1.8",
+    "expo-dev-client": "~5.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

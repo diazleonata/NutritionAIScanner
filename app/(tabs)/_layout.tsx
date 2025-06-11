@@ -65,7 +65,7 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="explore"
+                name="cloud"
                 options={{
                     title: "Cloud",
                     tabBarIcon: ({ color }) => (

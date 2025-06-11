@@ -2,7 +2,7 @@
   "expo": {
     "name": "NutritionAIScanner",
     "slug": "NutritionAIScanner",
-    "version": "1.0.0",
+    "version": "0.4",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "nutritionaiscanner",
@@ -13,10 +13,12 @@
     },
     "android": {
       "adaptiveIcon": {
+        "permissions": ["CAMERA"],
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.leonatadiaz.NutritionAIScanner"
     },
     "web": {
       "bundler": "metro",
@@ -37,6 +39,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "915fb3fe-5903-442a-bc27-8f2ea25c53c1"
+      }
     }
   }
 }

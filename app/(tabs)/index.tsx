@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useIsFocused } from "@react-navigation/native";
 import {
     View,
@@ -10,20 +10,37 @@ import {
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { BlurView } from "expo-blur";
 
-
-
 export default function IndexScreen() {
     const colorScheme = useColorScheme(); // 'light' | 'dark'
     const [permission, requestPermission] = useCameraPermissions();
     const [facing, setFacing] = useState<CameraType>("back");
     const isFocused = useIsFocused();
+    const [hasCheckedPermission, setHasCheckedPermission] = useState(false);
 
-    if (!permission) return <View style={styles.center} />;
-    if (!permission.granted) {
+    useEffect(() => {
+        if (permission === null) {
+            requestPermission().finally(() => setHasCheckedPermission(true));
+        } else {
+            setHasCheckedPermission(true);
+        }
+    }, [permission]);
+
+    if (!hasCheckedPermission) {
         return (
             <View style={styles.center}>
-                <Text>No access to camera</Text>
-                <TouchableOpacity onPress={requestPermission}>
+                <Text style={styles.permissionText}>Checking permissions...</Text>
+            </View>
+        );
+    }
+
+    if (!permission?.granted) {
+        return (
+            <View style={styles.center}>
+                <Text style={styles.permissionText}>No access to camera</Text>
+                <TouchableOpacity
+                    onPress={requestPermission}
+                    style={styles.permissionButton}
+                >
                     <Text>Grant</Text>
                 </TouchableOpacity>
             </View>
@@ -34,13 +51,11 @@ export default function IndexScreen() {
         // Add logic later for taking photo
     };
 
-    
-
     return (
         <View style={styles.fullScreen}>
             {/* Blurred background to mimic iOS */}
             <BlurView
-                intensity={50}
+                intensity={80}
                 tint={colorScheme === "dark" ? "dark" : "light"}
                 style={StyleSheet.absoluteFill}
             />
@@ -103,5 +118,16 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center"
+    },
+    permissionButton: {
+        marginTop: 12,
+        padding: 10,
+        backgroundColor: "tomato",
+        borderRadius: 8,
+        fontWeight: "bold"
+    },
+    permissionText: {
+        color: "tomato",
+        fontWeight: "bold"
     }
 });
