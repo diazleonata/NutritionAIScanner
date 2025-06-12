@@ -17,6 +17,7 @@ type IconSymbolName = keyof typeof MAPPING;
 const MAPPING = {
   'camera': 'camera',
   'cloudy': 'cloudy',
+  'at.circle': 'at-circle',
 } as IconMapping;
 
 /**

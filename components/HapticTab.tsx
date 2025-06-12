@@ -1,18 +1,34 @@
-import { BottomTabBarButtonProps } from '@react-navigation/bottom-tabs';
-import { PlatformPressable } from '@react-navigation/elements';
-import * as Haptics from 'expo-haptics';
+// components/HapticTab.tsx
+import React from "react";
+import { Pressable, View, StyleProp, ViewStyle } from "react-native";
+import * as Haptics from "expo-haptics";
+import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 
-export function HapticTab(props: BottomTabBarButtonProps) {
+export default function HapticTab({
+  children,
+  onPress,
+  accessibilityState,
+}: BottomTabBarButtonProps) {
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    onPress?.();
+  };
+
+  const isSelected = accessibilityState?.selected;
+
   return (
-    <PlatformPressable
-      {...props}
-      onPressIn={(ev) => {
-        if (process.env.EXPO_OS === 'ios') {
-          // Add a soft haptic feedback when pressing down on the tabs.
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }
-        props.onPressIn?.(ev);
-      }}
-    />
+    <Pressable onPress={handlePress} style={{ flex: 1 }}>
+      {/* Wrapping children in a View fixes the fragment prop warning */}
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          bottom: -4
+        }}
+      >
+        {children}
+      </View>
+    </Pressable>
   );
 }
