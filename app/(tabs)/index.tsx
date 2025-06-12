@@ -25,14 +25,6 @@ export default function IndexScreen() {
         }
     }, [permission]);
 
-    if (!hasCheckedPermission) {
-        return (
-            <View style={styles.center}>
-                <Text style={styles.permissionText}>Checking permissions...</Text>
-            </View>
-        );
-    }
-
     if (!permission?.granted) {
         return (
             <View style={styles.center}>
@@ -122,12 +114,12 @@ const styles = StyleSheet.create({
     permissionButton: {
         marginTop: 12,
         padding: 10,
-        backgroundColor: "tomato",
+        backgroundColor: "white",
         borderRadius: 8,
         fontWeight: "bold"
     },
     permissionText: {
-        color: "tomato",
+        color: "white",
         fontWeight: "bold"
     }
 });
