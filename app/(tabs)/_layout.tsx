@@ -6,8 +6,9 @@ import CustomTab from "@/components/CustomTab";
 
 export default function TabLayout() {
     const colorScheme = useColorScheme();
-    const tint = colorScheme === "dark" ? "dark" : "light";
-    const defaultIconColor = Colors[colorScheme === "dark" ? "dark" : "light"].tabIconDefault;
+    const blurTint = colorScheme === "dark" ? "dark" : "light"; // for BlurView
+    const tint = Colors[colorScheme].tabIconSelected; // actual color
+    const defaultIconColor = Colors[colorScheme].tabIconDefault;
 
     return (
         <Tabs
@@ -15,8 +16,10 @@ export default function TabLayout() {
             tabBar={props => (
                 <CustomTab
                     {...props}
+                    blurTint={blurTint}
                     tint={tint}
                     defaultIconColor={defaultIconColor}
+                    colorScheme={colorScheme}
                 />
             )}
             screenListeners={{ tabPress: e => e.preventDefault() }}

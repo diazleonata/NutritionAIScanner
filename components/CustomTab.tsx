@@ -8,14 +8,19 @@ import Animated, {
 } from "react-native-reanimated";
 import HapticTab from "@/components/HapticTab";
 import { TabIcon } from "@/components/TabIcon";
-import { usecolorScheme } from "@hooks/colorScheme"
 
 export default function CustomTab({
     state,
     navigation,
     tint,
-    defaultIconColor
+    blurTint,
+    defaultIconColor,
+    colorScheme
 }) {
+  
+  const highlightColor =
+  colorScheme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.05)";
+  
     const [selectedTab, setSelectedTab] = React.useState("index");
     const pillX = useSharedValue(0);
     const { width } = useWindowDimensions();
@@ -71,13 +76,13 @@ export default function CustomTab({
             {/* LEFT PILL (index, cloud) */}
             <View style={[styles.pill, styles.leftPill]}>
                 <BlurView
-                    tint={tint}
+                    tint={blurTint}
                     intensity={100}
                     style={StyleSheet.absoluteFill}
                     
                 />
                 <Animated.View
-                    style={[styles.highlightPill, animatedPillStyle]}
+                    style={[styles.highlightPill, animatedPillStyle, {backgroundColor: highlightColor}]}
                 />
                 {renderTab("index")}
                 {renderTab("cloud")}
@@ -86,7 +91,7 @@ export default function CustomTab({
             {/* RIGHT PILL (about) */}
             <View style={[styles.pill, styles.rightPill]}>
                 <BlurView
-                    tint= {tint}
+                    tint= {blurTint}
                     intensity={100}
                     style={StyleSheet.absoluteFill}
                 />

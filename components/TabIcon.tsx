@@ -6,7 +6,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 
-export function TabIcon({ iconName, isFocused, tint, defaultColor }) {
+export function TabIcon({ iconName, isFocused, tint, defaultColor}) {
     const opacity = useSharedValue(isFocused ? 1 : 0.5);
 
     React.useEffect(() => {
