@@ -1,21 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useIsFocused } from "@react-navigation/native";
 import {
     View,
     StyleSheet,
     TouchableOpacity,
     Text,
-    useColorScheme
+    useColorScheme,
+    Alert
 } from "react-native";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { BlurView } from "expo-blur";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import { uploadImageToSupabase } from "@/lib/uploadToSupabase";
+import * as FileSystem from "expo-file-system";
 
 export default function IndexScreen() {
-    const colorScheme = useColorScheme(); // 'light' | 'dark'
+    const colorScheme = useColorScheme();
+    const cameraRef = useRef<CameraView | null>(null);
     const [permission, requestPermission] = useCameraPermissions();
     const [facing, setFacing] = useState<CameraType>("back");
     const isFocused = useIsFocused();
     const [hasCheckedPermission, setHasCheckedPermission] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         if (permission === null) {
@@ -40,7 +46,31 @@ export default function IndexScreen() {
     }
 
     const takePhoto = async () => {
-        // Add logic later for taking photo
+        if (!cameraRef.current) return;
+
+        try {
+            const photo = await cameraRef.current.takePictureAsync({
+                quality: 0.5
+            });
+            // Copy to app's document directory (Expo Go can access this)
+            const fileName = `photo_${Date.now()}.jpg`;
+            const newPath = FileSystem.documentDirectory + fileName;
+
+            await FileSystem.copyAsync({
+                from: photo.uri,
+                to: newPath
+            });
+
+            router.push({
+                pathname: "/result",
+                params: { imageUri: newPath }
+            });
+        } catch (err) {
+            console.error("Camera error:", err);
+            Alert.alert("Error", "Something went wrong");
+        }
+
+        await uploadImageToSupabase(photo.uri);
     };
 
     return (
@@ -55,7 +85,11 @@ export default function IndexScreen() {
             {/* Camera Preview with rounded corners */}
             <View style={styles.cameraWrapper}>
                 {isFocused && (
-                    <CameraView style={styles.camera} facing={facing} />
+                    <CameraView
+                        ref={cameraRef}
+                        style={styles.camera}
+                        facing={facing}
+                    />
                 )}
             </View>
 

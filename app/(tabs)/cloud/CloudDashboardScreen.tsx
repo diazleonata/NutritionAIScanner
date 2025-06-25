@@ -30,7 +30,7 @@ export default function CloudDashboardScreen() {
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
-        router.replace("../cloud");
+        router.replace("/cloud");
     };
 
     const sections = [
@@ -47,7 +47,7 @@ export default function CloudDashboardScreen() {
     return (
         <View style={styles.container}>
             <BlurView
-                intensity={60}
+                intensity={80}
                 tint={colorScheme === "dark" ? "dark" : "light"}
                 style={StyleSheet.absoluteFill}
             />
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     avatar: {
         width: 56,
         height: 56,
-        borderRadius: 28,
+        borderRadius: 14,
         backgroundColor: "#ccc"
     },
     name: {
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
         fontWeight: "500",
         color: "#aaa",
         paddingHorizontal: 16,
-        paddingTop: 12,
+        paddingTop: 8,
         paddingBottom: 4
     },
     row: {
