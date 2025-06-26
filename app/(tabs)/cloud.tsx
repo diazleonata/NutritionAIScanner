@@ -13,7 +13,7 @@ export default function CloudEntry() {
     useFocusEffect(
         useCallback(() => {
             const checkSession = async () => {
-                await new Promise(resolve => setTimeout(resolve, 500));
+                await new Promise(resolve => setTimeout(resolve, 200));
 
                 const {
                     data: { session }
@@ -44,6 +44,7 @@ export default function CloudEntry() {
                     tint={colorScheme === "dark" ? "dark" : "light"}
                     style={StyleSheet.absoluteFill}
                 />
+                <ActivityIndicator size="large" />
             </View>
         );
     }

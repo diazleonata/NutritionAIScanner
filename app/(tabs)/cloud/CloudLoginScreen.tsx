@@ -78,7 +78,7 @@ export default function CloudLoginScreen() {
                 <TextInput
                     value={email}
                     onChangeText={setEmail}
-                    placeholder="Email"
+                    placeholder="alexandra@email.com"
                     placeholderTextColor={theme === "dark" ? "#aaa" : "#666"}
                     style={styles.input(theme)}
                     keyboardType="email-address"
@@ -87,7 +87,7 @@ export default function CloudLoginScreen() {
                 <TextInput
                     value={password}
                     onChangeText={setPassword}
-                    placeholder="Password"
+                    placeholder="mysecretpassword"
                     placeholderTextColor={theme === "dark" ? "#aaa" : "#666"}
                     style={styles.input(theme)}
                     secureTextEntry
@@ -194,14 +194,16 @@ const styles = {
         fontSize: 13
     },
     button: {
-        backgroundColor: "#0a7da3",
+        backgroundColor: "transparent",
+        borderColor: "#0a7da3",
+        borderWidth: 1,
         paddingVertical: 16,
         borderRadius: 12,
         alignItems: "center",
         marginBottom: 20
     },
     buttonText: {
-        color: "white",
+        color: "#0a7da3",
         fontSize: 16,
         fontWeight: "bold"
     }
