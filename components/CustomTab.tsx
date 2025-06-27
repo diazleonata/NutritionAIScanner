@@ -79,7 +79,7 @@ export default function CustomTab({
                     tint={blurTint}
                     intensity={100}
                     style={StyleSheet.absoluteFill}
-                    
+                    experimentalBlurMethod="dimezisBlurView"
                 />
                 <Animated.View
                     style={[styles.highlightPill, animatedPillStyle, {backgroundColor: highlightColor}]}

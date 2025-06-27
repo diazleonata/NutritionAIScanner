@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useIsFocused } from "@react-navigation/native";
 import {
     View,
@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { BlurView } from "expo-blur";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { uploadImageToSupabase } from "@/lib/uploadToSupabase";
 import * as FileSystem from "expo-file-system";
 
@@ -22,6 +22,19 @@ export default function IndexScreen() {
     const isFocused = useIsFocused();
     const [hasCheckedPermission, setHasCheckedPermission] = useState(false);
     const router = useRouter();
+    const [isCameraActive, setIsCameraActive] = useState(false);
+
+    useFocusEffect(
+        useCallback(() => {
+            const timeout = setTimeout(() => {
+                setIsCameraActive(true);
+            }, 100); // small delay helps
+            return () => {
+                clearTimeout(timeout);
+                setIsCameraActive(false);
+            };
+        }, [])
+    );
 
     useEffect(() => {
         if (permission === null) {
@@ -60,17 +73,20 @@ export default function IndexScreen() {
                 from: photo.uri,
                 to: newPath
             });
+            setIsCameraActive(false);
 
-            router.push({
-                pathname: "/result",
-                params: { imageUri: newPath }
-            });
+            setTimeout(() => {
+                router.push({
+                    pathname: "/result",
+                    params: { imageUri: newPath }
+                });
+            }, 50);
         } catch (err) {
             console.error("Camera error:", err);
             Alert.alert("Error", "Something went wrong");
         }
 
-        await uploadImageToSupabase(photo.uri);
+        // await uploadImageToSupabase(photo.uri);
     };
 
     return (
@@ -83,8 +99,11 @@ export default function IndexScreen() {
             />
 
             {/* Camera Preview with rounded corners */}
-            <View style={styles.cameraWrapper}>
-                {isFocused && (
+            <View
+                key={isCameraActive ? "active" : "inactive"}
+                style={styles.cameraWrapper}
+            >
+                {isCameraActive && isFocused && (
                     <CameraView
                         ref={cameraRef}
                         style={styles.camera}
@@ -121,7 +140,8 @@ const styles = StyleSheet.create({
     },
     camera: {
         width: "100%",
-        height: "100%"
+        height: "100%",
+        aspectRatio: 6 / 9
     },
     shutterButton: (colorScheme: "light" | "dark") => ({
         marginBottom: 125,

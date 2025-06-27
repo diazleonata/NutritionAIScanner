@@ -166,15 +166,22 @@ const styles = {
         marginBottom: 30
     }),
     input: (theme: "light" | "dark") => ({
-        backgroundColor: theme === "dark" ? "#1e1e1e" : "#fff",
-        borderRadius: 12,
-        paddingHorizontal: 16,
+        backgroundColor: theme === "dark" ? "#222" : "#f0f0f0", // more muted
+        borderRadius: 14,
+        paddingHorizontal: 18,
         paddingVertical: 14,
         color: theme === "dark" ? "white" : "black",
         fontSize: 16,
         width: "100%",
-        margin: 5
+        marginBottom: 16,
+        // Optional enhancements:
+        shadowColor: theme === "dark" ? "#000" : "#ccc",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+        elevation: 3
     }),
+
     footer: {
         alignItems: "center",
         marginBottom: 0
