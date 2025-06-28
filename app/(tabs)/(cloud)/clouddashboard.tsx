@@ -41,7 +41,7 @@ export default function CloudDashboardScreen() {
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
-        router.replace("cloud");
+        router.replace("(tabs)/(cloud)");
     };
 
     const sections = [

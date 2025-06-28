@@ -43,7 +43,7 @@ export default function CloudLoginScreen() {
                     mode === "login" ? "signed in" : "registered"
                 } successfully.`
             );
-            router.replace("cloud");
+            router.replace("(tabs)/(cloud)");
         }
 
         setLoading(false);
