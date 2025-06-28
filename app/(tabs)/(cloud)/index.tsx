@@ -20,9 +20,9 @@ export default function CloudEntry() {
                 } = await supabase.auth.getSession();
 
                 if (session) {
-                    router.replace("/cloud/CloudDashboardScreen");
+                    router.replace("clouddashboard");
                 } else {
-                    router.replace("/cloud/CloudLoginScreen");
+                    router.replace("cloudlogin");
                 }
             };
 

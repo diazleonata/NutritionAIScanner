@@ -5,11 +5,11 @@ import {
     TextInput,
     Pressable,
     StyleSheet,
-    Alert
+    Alert,
+    useColorScheme
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import Colors from "@/constants/Colors";
 import { BlurView } from "expo-blur";
 import { supabase } from "@/lib/supabase";
@@ -43,7 +43,7 @@ export default function CloudLoginScreen() {
                     mode === "login" ? "signed in" : "registered"
                 } successfully.`
             );
-            router.replace("/cloud");
+            router.replace("cloud");
         }
 
         setLoading(false);

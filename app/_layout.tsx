@@ -1,45 +1,35 @@
-import {
-    DarkTheme,
-    DefaultTheme,
-    ThemeProvider
-} from "@react-navigation/native";
-import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import "react-native-reanimated";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { useBackButtonExit } from "@/hooks/useBackButtonExit";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { View, StyleSheet } from "react-native";
+import { useColorScheme } from "@/hooks/useColorScheme";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-    const colorScheme = useColorScheme();
-    useBackButtonExit();
+  const colorScheme = useColorScheme();
+  const [fontsLoaded] = useFonts({
+    Inter: require("@/assets/fonts/Inter_24pt-Regular.ttf"),
+  });
 
-    return (
-        <GestureHandlerRootView style={styles.flex}>
-            <ThemeProvider
-                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-            >
-                <Stack>
-                    <Stack.Screen
-                        name="(tabs)"
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="result"
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen name="+not-found" />
-                </Stack>
-                <StatusBar style="auto" />
-            </ThemeProvider>
-        </GestureHandlerRootView>
-    );
-}
-
-const styles = StyleSheet.create({
-    flex: {
-        flex: 1
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
     }
-});
+  }, [fontsLoaded]);
+
+  // don’t render the navigator until everything’s ready
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+        <Stack initialRouteName="(tabs)" style={{fontFamily: "Inter"}}>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+    </GestureHandlerRootView>
+  );
+}

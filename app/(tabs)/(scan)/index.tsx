@@ -28,7 +28,7 @@ export default function IndexScreen() {
         useCallback(() => {
             const timeout = setTimeout(() => {
                 setIsCameraActive(true);
-            }, 100); // small delay helps
+            }, 150); // small delay helps
             return () => {
                 clearTimeout(timeout);
                 setIsCameraActive(false);
@@ -63,7 +63,7 @@ export default function IndexScreen() {
 
         try {
             const photo = await cameraRef.current.takePictureAsync({
-                quality: 0.5
+                quality: 0.8
             });
             // Copy to app's document directory (Expo Go can access this)
             const fileName = `photo_${Date.now()}.jpg`;
@@ -77,7 +77,7 @@ export default function IndexScreen() {
 
             setTimeout(() => {
                 router.push({
-                    pathname: "/result",
+                    pathname: "result",
                     params: { imageUri: newPath }
                 });
             }, 50);
@@ -85,13 +85,10 @@ export default function IndexScreen() {
             console.error("Camera error:", err);
             Alert.alert("Error", "Something went wrong");
         }
-
-        // await uploadImageToSupabase(photo.uri);
     };
 
     return (
         <View style={styles.fullScreen}>
-            {/* Blurred background to mimic iOS */}
             <BlurView
                 intensity={80}
                 tint={colorScheme === "dark" ? "dark" : "light"}

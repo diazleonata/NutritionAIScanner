@@ -15,7 +15,7 @@ import { useRouter } from "expo-router";
 import { BlurView } from "expo-blur";
 import Constants from "expo-constants";
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import RecentScans from "@/app/recentscans"
+import RecentScans from "@/app/(tabs)/(cloud)/recentscans"
 
 export default function CloudDashboardScreen() {
     const router = useRouter();
@@ -41,7 +41,7 @@ export default function CloudDashboardScreen() {
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
-        router.replace("/cloud");
+        router.replace("cloud");
     };
 
     const sections = [

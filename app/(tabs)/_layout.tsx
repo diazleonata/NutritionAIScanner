@@ -1,6 +1,6 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
 import CustomTab from "@/components/CustomTab";
 
@@ -23,10 +23,11 @@ export default function TabLayout() {
                 />
             )}
             screenListeners={{ tabPress: e => e.preventDefault() }}
+            initialRouteName="(scan)/index"
         >
-            <Tabs.Screen name="index" />
-            <Tabs.Screen name="cloud" />
-            <Tabs.Screen name="about" />
+            <Tabs.Screen name="(scan)" />
+            <Tabs.Screen name="(cloud" />
+            <Tabs.Screen name="(about)" />
         </Tabs>
     );
 }
