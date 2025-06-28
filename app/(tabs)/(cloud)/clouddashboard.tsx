@@ -6,17 +6,22 @@ import {
     ScrollView,
     Pressable,
     Image,
-    useColorScheme
+    useColorScheme,
+    Share,
+    TouchableOpacity
 } from "react-native";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "expo-router";
 import { BlurView } from "expo-blur";
 import Constants from "expo-constants";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import RecentScans from "@/app/(tabs)/(cloud)/recentscans"
 
 export default function CloudDashboardScreen() {
     const router = useRouter();
     const colorScheme = useColorScheme();
     const [userEmail, setUserEmail] = useState("");
+    const [showRecent, setShowRecent] = useState(false);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -28,9 +33,15 @@ export default function CloudDashboardScreen() {
         fetchUser();
     }, []);
 
+    const handleShare = () => {
+        Share.share({
+            message: "Check out this awesome AI app! https://github.com"
+        });
+    };
+
     const handleSignOut = async () => {
         await supabase.auth.signOut();
-        router.replace("../cloud");
+        router.replace("(tabs)/(cloud)");
     };
 
     const sections = [
@@ -41,18 +52,26 @@ export default function CloudDashboardScreen() {
         {
             title: "About",
             data: [`App Version: ${Constants.expoConfig?.version ?? "1.0.0"}`]
+        },
+        {
+            title: "Share this app",
+            data: ["Tell your friends about this app, help us much!"]
         }
     ];
 
     return (
         <View style={styles.container}>
             <BlurView
-                intensity={60}
+                intensity={80}
                 tint={colorScheme === "dark" ? "dark" : "light"}
                 style={StyleSheet.absoluteFill}
             />
 
             <ScrollView contentContainerStyle={styles.scroll}>
+                <View style={styles.pageWrapper}>
+                    <Text style={styles.pageTitle}>Cloud</Text>
+                </View>
+
                 {/* Profile */}
                 <View style={styles.profileContainer}>
                     <Image
@@ -61,13 +80,43 @@ export default function CloudDashboardScreen() {
                     />
                     <View style={{ marginLeft: 12 }}>
                         <Text style={styles.name}>{userEmail}</Text>
+                        <Text style={styles.lastLogText}>
+                            Last Logged: Recently
+                        </Text>
                     </View>
+
+                    <TouchableOpacity
+                        onPress={() => setShowRecent(true)}
+                        style={styles.arrowForward}
+                    >
+                        <IconSymbol
+                            name="arrow.forward"
+                            size={24}
+                            color="rgba(255,255,255,0.2)"
+                        />
+                    </TouchableOpacity>
                 </View>
 
                 {/* Sections */}
                 {sections.map((section, i) => (
                     <View key={i} style={styles.card}>
                         <Text style={styles.sectionTitle}>{section.title}</Text>
+
+                        <TouchableOpacity
+                            onPress={
+                                section.title === "Share this app"
+                                    ? handleShare
+                                    : undefined
+                            }
+                            style={[styles.arrowForward, { paddingTop: 8 }]}
+                        >
+                            <IconSymbol
+                                name="arrow.forward"
+                                size={16}
+                                color="rgba(255,255,255,0.2)"
+                            />
+                        </TouchableOpacity>
+
                         {section.data.map((item, idx) => (
                             <View key={idx} style={styles.row}>
                                 <Text style={styles.rowText}>{item}</Text>
@@ -81,6 +130,7 @@ export default function CloudDashboardScreen() {
                     <Text style={styles.signOutText}>Sign Out</Text>
                 </Pressable>
             </ScrollView>
+            <RecentScans visible={showRecent} onClose={() => setShowRecent(false)} />
         </View>
     );
 }
@@ -90,24 +140,29 @@ const styles = StyleSheet.create({
         flex: 1
     },
     scroll: {
-        paddingTop: 64,
-        paddingHorizontal: 20,
-        paddingBottom: 100
+        paddingTop: 94,
+        paddingHorizontal: 20
+    },
+    pageWrapper: {
+        marginBottom: 8
+    },
+    pageTitle: {
+        fontSize: 36,
+        fontWeight: "bold",
+        color: "white"
     },
     profileContainer: {
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: "rgba(255,255,255,0.05)",
-        padding: 16,
+        padding: 8,
         borderRadius: 16,
-        marginBottom: 20,
-        borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.1)"
+        marginBottom: 20
     },
     avatar: {
         width: 56,
         height: 56,
-        borderRadius: 28,
+        borderRadius: 14,
         backgroundColor: "#ccc"
     },
     name: {
@@ -115,12 +170,19 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         color: "white"
     },
+    lastLogText: {
+        color: "rgba(255, 255, 255, 0.2)",
+        fontSize: 12,
+        fontWeight: "bold"
+    },
+    arrowForward: {
+        position: "absolute",
+        right: 10
+    },
     card: {
-        marginTop: 16,
+        marginBottom: 20,
         backgroundColor: "rgba(255,255,255,0.04)",
         borderRadius: 16,
-        borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.1)",
         overflow: "hidden"
     },
     sectionTitle: {
@@ -128,7 +190,7 @@ const styles = StyleSheet.create({
         fontWeight: "500",
         color: "#aaa",
         paddingHorizontal: 16,
-        paddingTop: 12,
+        paddingTop: 8,
         paddingBottom: 4
     },
     row: {
@@ -142,9 +204,8 @@ const styles = StyleSheet.create({
         color: "white"
     },
     signOutButton: {
-        marginTop: 32,
-        alignSelf: "center",
-        paddingHorizontal: 24,
+        marginBottom: 20,
+        paddingHorizontal: 16,
         paddingVertical: 12,
         backgroundColor: "transparent",
         borderRadius: 12,
@@ -154,6 +215,7 @@ const styles = StyleSheet.create({
     signOutText: {
         fontSize: 16,
         fontWeight: "600",
-        color: "#FF3B30"
+        color: "#FF3B30",
+        alignSelf: "center"
     }
 });

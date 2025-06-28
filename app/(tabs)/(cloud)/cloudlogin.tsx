@@ -5,11 +5,11 @@ import {
     TextInput,
     Pressable,
     StyleSheet,
-    Alert
+    Alert,
+    useColorScheme
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import Colors from "@/constants/Colors";
 import { BlurView } from "expo-blur";
 import { supabase } from "@/lib/supabase";
@@ -43,7 +43,7 @@ export default function CloudLoginScreen() {
                     mode === "login" ? "signed in" : "registered"
                 } successfully.`
             );
-            router.replace("../cloud");
+            router.replace("(tabs)/(cloud)");
         }
 
         setLoading(false);
@@ -78,7 +78,7 @@ export default function CloudLoginScreen() {
                 <TextInput
                     value={email}
                     onChangeText={setEmail}
-                    placeholder="Email"
+                    placeholder="alexandra@email.com"
                     placeholderTextColor={theme === "dark" ? "#aaa" : "#666"}
                     style={styles.input(theme)}
                     keyboardType="email-address"
@@ -87,7 +87,7 @@ export default function CloudLoginScreen() {
                 <TextInput
                     value={password}
                     onChangeText={setPassword}
-                    placeholder="Password"
+                    placeholder="mysecretpassword"
                     placeholderTextColor={theme === "dark" ? "#aaa" : "#666"}
                     style={styles.input(theme)}
                     secureTextEntry
@@ -166,15 +166,22 @@ const styles = {
         marginBottom: 30
     }),
     input: (theme: "light" | "dark") => ({
-        backgroundColor: theme === "dark" ? "#1e1e1e" : "#fff",
-        borderRadius: 12,
-        paddingHorizontal: 16,
+        backgroundColor: theme === "dark" ? "#222" : "#f0f0f0", // more muted
+        borderRadius: 14,
+        paddingHorizontal: 18,
         paddingVertical: 14,
         color: theme === "dark" ? "white" : "black",
         fontSize: 16,
         width: "100%",
-        margin: 5
+        marginBottom: 16,
+        // Optional enhancements:
+        shadowColor: theme === "dark" ? "#000" : "#ccc",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+        elevation: 3
     }),
+
     footer: {
         alignItems: "center",
         marginBottom: 0
@@ -194,14 +201,16 @@ const styles = {
         fontSize: 13
     },
     button: {
-        backgroundColor: "#0a7da3",
+        backgroundColor: "transparent",
+        borderColor: "#0a7da3",
+        borderWidth: 1,
         paddingVertical: 16,
         borderRadius: 12,
         alignItems: "center",
         marginBottom: 20
     },
     buttonText: {
-        color: "white",
+        color: "#0a7da3",
         fontSize: 16,
         fontWeight: "bold"
     }

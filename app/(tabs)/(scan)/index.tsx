@@ -1,21 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useIsFocused } from "@react-navigation/native";
 import {
     View,
     StyleSheet,
     TouchableOpacity,
     Text,
-    useColorScheme
+    useColorScheme,
+    Alert
 } from "react-native";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { BlurView } from "expo-blur";
+import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
+import { uploadImageToSupabase } from "@/lib/uploadToSupabase";
+import * as FileSystem from "expo-file-system";
 
 export default function IndexScreen() {
-    const colorScheme = useColorScheme(); // 'light' | 'dark'
+    const colorScheme = useColorScheme();
+    const cameraRef = useRef<CameraView | null>(null);
     const [permission, requestPermission] = useCameraPermissions();
     const [facing, setFacing] = useState<CameraType>("back");
     const isFocused = useIsFocused();
     const [hasCheckedPermission, setHasCheckedPermission] = useState(false);
+    const router = useRouter();
+    const [isCameraActive, setIsCameraActive] = useState(false);
+
+    useFocusEffect(
+        useCallback(() => {
+            const timeout = setTimeout(() => {
+                setIsCameraActive(true);
+            }, 150); // small delay helps
+            return () => {
+                clearTimeout(timeout);
+                setIsCameraActive(false);
+            };
+        }, [])
+    );
 
     useEffect(() => {
         if (permission === null) {
@@ -40,12 +59,36 @@ export default function IndexScreen() {
     }
 
     const takePhoto = async () => {
-        // Add logic later for taking photo
+        if (!cameraRef.current) return;
+
+        try {
+            const photo = await cameraRef.current.takePictureAsync({
+                quality: 0.8
+            });
+            // Copy to app's document directory (Expo Go can access this)
+            const fileName = `photo_${Date.now()}.jpg`;
+            const newPath = FileSystem.documentDirectory + fileName;
+
+            await FileSystem.copyAsync({
+                from: photo.uri,
+                to: newPath
+            });
+            setIsCameraActive(false);
+
+            setTimeout(() => {
+                router.push({
+                    pathname: "result",
+                    params: { imageUri: newPath }
+                });
+            }, 50);
+        } catch (err) {
+            console.error("Camera error:", err);
+            Alert.alert("Error", "Something went wrong");
+        }
     };
 
     return (
         <View style={styles.fullScreen}>
-            {/* Blurred background to mimic iOS */}
             <BlurView
                 intensity={80}
                 tint={colorScheme === "dark" ? "dark" : "light"}
@@ -53,9 +96,16 @@ export default function IndexScreen() {
             />
 
             {/* Camera Preview with rounded corners */}
-            <View style={styles.cameraWrapper}>
-                {isFocused && (
-                    <CameraView style={styles.camera} facing={facing} />
+            <View
+                key={isCameraActive ? "active" : "inactive"}
+                style={styles.cameraWrapper}
+            >
+                {isCameraActive && isFocused && (
+                    <CameraView
+                        ref={cameraRef}
+                        style={styles.camera}
+                        facing={facing}
+                    />
                 )}
             </View>
 
@@ -87,7 +137,8 @@ const styles = StyleSheet.create({
     },
     camera: {
         width: "100%",
-        height: "100%"
+        height: "100%",
+        aspectRatio: 6 / 9
     },
     shutterButton: (colorScheme: "light" | "dark") => ({
         marginBottom: 125,

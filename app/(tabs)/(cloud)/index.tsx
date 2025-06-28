@@ -13,14 +13,16 @@ export default function CloudEntry() {
     useFocusEffect(
         useCallback(() => {
             const checkSession = async () => {
+                await new Promise(resolve => setTimeout(resolve, 200));
+
                 const {
                     data: { session }
                 } = await supabase.auth.getSession();
 
                 if (session) {
-                    router.replace("/cloud/CloudDashboardScreen");
+                    router.replace("clouddashboard");
                 } else {
-                    router.replace("/cloud/CloudLoginScreen");
+                    router.replace("cloudlogin");
                 }
             };
 
@@ -42,6 +44,7 @@ export default function CloudEntry() {
                     tint={colorScheme === "dark" ? "dark" : "light"}
                     style={StyleSheet.absoluteFill}
                 />
+                <ActivityIndicator size="large" />
             </View>
         );
     }
