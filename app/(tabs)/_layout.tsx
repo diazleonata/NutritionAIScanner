@@ -26,7 +26,7 @@ export default function TabLayout() {
             initialRouteName="(scan)"
         >
             <Tabs.Screen name="(scan)" />
-            <Tabs.Screen name="(cloud" />
+            <Tabs.Screen name="(cloud)" />
             <Tabs.Screen name="(about)" />
         </Tabs>
     );

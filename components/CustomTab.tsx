@@ -21,11 +21,11 @@ export default function CustomTab({
   const highlightColor =
   colorScheme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.05)";
   
-    const [selectedTab, setSelectedTab] = React.useState("index");
+    const [selectedTab, setSelectedTab] = React.useState("(scan)");
     const pillX = useSharedValue(0);
     const { width } = useWindowDimensions();
 
-    // Values based on your styles: 140 width, 2 icons, 8px left padding
+    // 140 width, 2 icons, 8px left padding
     const iconWidth = 60;
     const paddingLeft = 8;
 
@@ -49,9 +49,9 @@ export default function CustomTab({
         };
 
         const iconName =
-            routeName === "index"
+            routeName === "(scan)"
                 ? "camera"
-                : routeName === "cloud"
+                : routeName === "(cloud)"
                 ? "cloudy"
                 : "at.circle";
 
@@ -94,6 +94,7 @@ export default function CustomTab({
                     tint= {blurTint}
                     intensity={100}
                     style={StyleSheet.absoluteFill}
+                    experimentalBlurMethod="dimezisBlurView"
                 />
                 {renderTab("(about)")}
             </View>
