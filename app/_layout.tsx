@@ -4,6 +4,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
 
 SplashScreen.preventAutoHideAsync();
 
@@ -26,10 +27,12 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack initialRouteName="(tabs)" style={{fontFamily: "Inter"}}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
+      </ThemeProvider>
     </GestureHandlerRootView>
   );
 }
