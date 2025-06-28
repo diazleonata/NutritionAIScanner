@@ -84,8 +84,8 @@ export default function CustomTab({
                 <Animated.View
                     style={[styles.highlightPill, animatedPillStyle, {backgroundColor: highlightColor}]}
                 />
-                {renderTab("index")}
-                {renderTab("cloud")}
+                {renderTab("(scan)")}
+                {renderTab("(cloud)")}
             </View>
 
             {/* RIGHT PILL (about) */}
@@ -95,7 +95,7 @@ export default function CustomTab({
                     intensity={100}
                     style={StyleSheet.absoluteFill}
                 />
-                {renderTab("about")}
+                {renderTab("(about)")}
             </View>
         </>
     );

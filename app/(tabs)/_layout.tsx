@@ -23,7 +23,7 @@ export default function TabLayout() {
                 />
             )}
             screenListeners={{ tabPress: e => e.preventDefault() }}
-            initialRouteName="(scan)/index"
+            initialRouteName="(scan)"
         >
             <Tabs.Screen name="(scan)" />
             <Tabs.Screen name="(cloud" />
