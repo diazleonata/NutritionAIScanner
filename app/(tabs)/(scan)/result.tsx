@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "transparent",
-        alignItems: "center"
+        alignItems: "center",
     },
     backButton: {
         position: "absolute",

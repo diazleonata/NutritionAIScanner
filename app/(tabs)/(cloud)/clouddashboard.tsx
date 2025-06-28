@@ -15,7 +15,7 @@ import { useRouter } from "expo-router";
 import { BlurView } from "expo-blur";
 import Constants from "expo-constants";
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import RecentScans from "@/app/(tabs)/(cloud)/recentscans"
+import RecentScans from "@/app/(tabs)/(cloud)/recentscans";
 
 export default function CloudDashboardScreen() {
     const router = useRouter();
@@ -32,6 +32,10 @@ export default function CloudDashboardScreen() {
         };
         fetchUser();
     }, []);
+
+    const handleProfile = () => {
+      
+    }
 
     const handleShare = () => {
         Share.share({
@@ -50,14 +54,23 @@ export default function CloudDashboardScreen() {
             data: ["Scan result placeholder #1", "Scan result placeholder #2"]
         },
         {
-            title: "About",
-            data: [`App Version: ${Constants.expoConfig?.version ?? "1.0.0"}`]
-        },
-        {
             title: "Share this app",
             data: ["Tell your friends about this app, help us much!"]
         }
     ];
+
+    const handleSectionPress = (section: (typeof sections)[number]) => {
+        switch (section.title) {
+            case "Share this app":
+                handleShare();
+                break;
+            case "Recent AI Scans":
+                setShowRecent(true);
+                break;
+            default:
+                console.log("No action set for", section.title);
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -81,12 +94,12 @@ export default function CloudDashboardScreen() {
                     <View style={{ marginLeft: 12 }}>
                         <Text style={styles.name}>{userEmail}</Text>
                         <Text style={styles.lastLogText}>
-                            Last Logged: Recently
+                            Online •
                         </Text>
                     </View>
 
                     <TouchableOpacity
-                        onPress={() => setShowRecent(true)}
+                        onPress={handleProfile}
                         style={styles.arrowForward}
                     >
                         <IconSymbol
@@ -103,11 +116,7 @@ export default function CloudDashboardScreen() {
                         <Text style={styles.sectionTitle}>{section.title}</Text>
 
                         <TouchableOpacity
-                            onPress={
-                                section.title === "Share this app"
-                                    ? handleShare
-                                    : undefined
-                            }
+                            onPress={() => handleSectionPress(section)}
                             style={[styles.arrowForward, { paddingTop: 8 }]}
                         >
                             <IconSymbol
@@ -130,7 +139,10 @@ export default function CloudDashboardScreen() {
                     <Text style={styles.signOutText}>Sign Out</Text>
                 </Pressable>
             </ScrollView>
-            <RecentScans visible={showRecent} onClose={() => setShowRecent(false)} />
+            <RecentScans
+                visible={showRecent}
+                onClose={() => setShowRecent(false)}
+            />
         </View>
     );
 }
