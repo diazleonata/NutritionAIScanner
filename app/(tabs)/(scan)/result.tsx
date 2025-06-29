@@ -13,6 +13,7 @@ import { BlurView } from "expo-blur";
 import * as FileSystem from "expo-file-system";
 import { useEffect, useState } from "react";
 import Constants from "expo-constants";
+import { supabase } from "@/lib/supabase";
 
 const API_URL = Constants.expoConfig?.extra?.API_URL!;
 
@@ -70,10 +71,42 @@ export default function ResultScreen() {
 
             const data = await response.json();
             setResult(data);
+            insertResultToSupabase(data);
         } catch (err) {
             console.error("API error:", err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const insertResultToSupabase = async (resultData: typeof result) => {
+        try {
+            const {
+                data: { user },
+                error: userError
+            } = await supabase.auth.getUser();
+            if (userError || !user) return;
+
+            const insertData = {
+                user_id: user.id,
+                food_name: resultData.label,
+                calories: resultData.nutrition.Kalori,
+                carbs: resultData.nutrition.Karbohidrat,
+                fat: resultData.nutrition.Lemak,
+                protein: resultData.nutrition.Protein,
+                accuracy: resultData.akurasi
+            };
+
+            const { error } = await supabase
+                .from("food_results")
+                .insert(insertData);
+            if (error) {
+                console.error("Insert failed:", error.message);
+            } else {
+                console.log("Result inserted to Supabase");
+            }
+        } catch (err) {
+            console.error("Insert error:", err);
         }
     };
 
@@ -101,12 +134,12 @@ export default function ResultScreen() {
             </View>
 
             {loading ? (
-                    <View style={styles.spinnerCenter}>
-                        <ActivityIndicator
-                            size="large"
-                            color={colorScheme === "dark" ? "#fff" : "light"}
-                        />
-                    </View>
+                <View style={styles.spinnerCenter}>
+                    <ActivityIndicator
+                        size="large"
+                        color={colorScheme === "dark" ? "#fff" : "light"}
+                    />
+                </View>
             ) : result && result.nutrition ? (
                 <View style={styles.resultBox}>
                     <BlurView

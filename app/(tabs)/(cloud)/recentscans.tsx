@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
     View,
     Text,
@@ -16,14 +16,9 @@ import Animated, {
 } from "react-native-reanimated";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { BlurView } from "expo-blur";
+import { supabase } from "@/lib/supabase";
 
 const { width } = Dimensions.get("window");
-
-const fakeScans = [
-    { id: "1", name: "Fried Rice", calories: "400 kcal" },
-    { id: "2", name: "Burger", calories: "550 kcal" },
-    { id: "3", name: "Salad", calories: "200 kcal" }
-];
 
 type Props = {
     visible: boolean;
@@ -35,14 +30,39 @@ export default function RecentScansOverlay({ visible, onClose }: Props) {
     const isDark = theme === "dark";
 
     const translateX = useSharedValue(width);
+    const [scans, setScans] = useState<
+        { id: string; food_name: string; calories: string }[]
+    >([]);
 
     useEffect(() => {
         if (visible) {
             translateX.value = withTiming(0, { duration: 400 });
+            fetchScans();
         } else {
             translateX.value = withTiming(width, { duration: 300 });
         }
     }, [visible]);
+
+    const fetchScans = async () => {
+        const {
+            data: { user },
+            error: userError
+        } = await supabase.auth.getUser();
+        if (userError || !user) return;
+
+        const { data, error } = await supabase
+            .from("food_results")
+            .select("id, food_name, calories")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false });
+
+        if (error) {
+            console.error("Fetch scans failed:", error.message);
+            return;
+        }
+
+        setScans(data || []);
+    };
 
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [{ translateX: translateX.value }]
@@ -95,7 +115,7 @@ export default function RecentScansOverlay({ visible, onClose }: Props) {
                     </Text>
 
                     <FlatList
-                        data={fakeScans}
+                        data={scans}
                         keyExtractor={item => item.id}
                         contentContainerStyle={{ paddingBottom: 40 }}
                         renderItem={({ item }) => (
@@ -110,7 +130,7 @@ export default function RecentScansOverlay({ visible, onClose }: Props) {
                                         { color: isDark ? "#fff" : "#000" }
                                     ]}
                                 >
-                                    {item.name}
+                                    {item.food_name}
                                 </Text>
                                 <Text
                                     style={[
@@ -122,6 +142,17 @@ export default function RecentScansOverlay({ visible, onClose }: Props) {
                                 </Text>
                             </BlurView>
                         )}
+                        ListEmptyComponent={
+                            <Text
+                                style={{
+                                    color: isDark ? "#aaa" : "#444",
+                                    textAlign: "center",
+                                    marginTop: 20
+                                }}
+                            >
+                                No scans found.
+                            </Text>
+                        }
                     />
                 </View>
             </Animated.View>
