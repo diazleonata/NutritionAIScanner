@@ -31,7 +31,15 @@ export default function RecentScansOverlay({ visible, onClose }: Props) {
 
     const translateX = useSharedValue(width);
     const [scans, setScans] = useState<
-        { id: string; food_name: string; calories: string }[]
+        {
+            id: string;
+            food_name: string;
+            calories: string;
+            fat: string;
+            carbs: string;
+            protein: string;
+            created_at: string;
+        }[]
     >([]);
 
     useEffect(() => {
@@ -52,7 +60,7 @@ export default function RecentScansOverlay({ visible, onClose }: Props) {
 
         const { data, error } = await supabase
             .from("food_results")
-            .select("id, food_name, calories")
+            .select("id, food_name, calories, fat, carbs, protein, created_at")
             .eq("user_id", user.id)
             .order("created_at", { ascending: false });
 
@@ -68,8 +76,12 @@ export default function RecentScansOverlay({ visible, onClose }: Props) {
         transform: [{ translateX: translateX.value }]
     }));
 
+    // horizontal only: must move >10px horizontally; vertical movement fails the gesture
     const panGesture = Gesture.Pan()
+        .activeOffsetX([-10, 10])
+        .failOffsetY([-10, 10])
         .onUpdate(e => {
+            // only track positive right‐swipe
             if (e.translationX > 0) {
                 translateX.value = e.translationX;
             }
@@ -117,7 +129,9 @@ export default function RecentScansOverlay({ visible, onClose }: Props) {
                     <FlatList
                         data={scans}
                         keyExtractor={item => item.id}
-                        contentContainerStyle={{ paddingBottom: 40 }}
+                        keyboardShouldPersistTaps="handled"
+                        contentContainerStyle={{ paddingBottom: 100 }}
+                        showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => (
                             <BlurView
                                 intensity={40}
@@ -132,13 +146,57 @@ export default function RecentScansOverlay({ visible, onClose }: Props) {
                                 >
                                     {item.food_name}
                                 </Text>
+
+                                <View style={styles.nutritionRow}>
+                                    <Text
+                                        style={[
+                                            styles.nutritionText,
+                                            { color: isDark ? "#ccc" : "#444" }
+                                        ]}
+                                    >
+                                        <Text style={styles.label}>
+                                            Calories:
+                                        </Text>{" "}
+                                        {item.calories}
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            styles.nutritionText,
+                                            { color: isDark ? "#ccc" : "#444" }
+                                        ]}
+                                    >
+                                        <Text style={styles.label}>Fat:</Text>{" "}
+                                        {item.fat}
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            styles.nutritionText,
+                                            { color: isDark ? "#ccc" : "#444" }
+                                        ]}
+                                    >
+                                        <Text style={styles.label}>Carbs:</Text>{" "}
+                                        {item.carbs}
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            styles.nutritionText,
+                                            { color: isDark ? "#ccc" : "#444" }
+                                        ]}
+                                    >
+                                        <Text style={styles.label}>
+                                            Protein:
+                                        </Text>{" "}
+                                        {item.protein}
+                                    </Text>
+                                </View>
+
                                 <Text
                                     style={[
-                                        styles.cal,
-                                        { color: isDark ? "#ccc" : "#666" }
+                                        styles.timestamp,
+                                        { color: isDark ? "#aaa" : "#666" }
                                     ]}
                                 >
-                                    {item.calories}
+                                    {new Date(item.created_at).toLocaleString()}
                                 </Text>
                             </BlurView>
                         )}
@@ -186,7 +244,20 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "500"
     },
-    cal: {
-        fontSize: 14
+    nutritionRow: {
+        marginTop: 8,
+        marginBottom: 6
+    },
+    nutritionText: {
+        fontSize: 14,
+        marginBottom: 2
+    },
+    label: {
+        fontWeight: "bold"
+    },
+    timestamp: {
+        fontSize: 12,
+        textAlign: "right",
+        marginTop: 8
     }
 });
