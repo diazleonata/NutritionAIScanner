@@ -12,12 +12,13 @@ import { useLocalSearchParams, router } from "expo-router";
 import { BlurView } from "expo-blur";
 import * as FileSystem from "expo-file-system";
 import { useEffect, useState } from "react";
-import Constants from "expo-constants"
+import Constants from "expo-constants";
 
-const API_URL = (Constants.expoConfig?.extra?.API_URL!)
+const API_URL = Constants.expoConfig?.extra?.API_URL!;
 
 export default function ResultScreen() {
     const colorScheme = useColorScheme();
+    const styles = getStyles(colorScheme);
     const { imageUri } = useLocalSearchParams<{ imageUri: string }>();
 
     const [loading, setLoading] = useState(true);
@@ -88,7 +89,11 @@ export default function ResultScreen() {
                 onPress={() => router.back()}
                 style={styles.backButton}
             >
-                <IconSymbol name="arrow.circle" size={40} color="white" />
+                <IconSymbol
+                    name="arrow.circle"
+                    size={40}
+                    color={colorScheme === "dark" ? "white" : "black"}
+                />
             </TouchableOpacity>
 
             <View style={styles.imageWrapper}>
@@ -96,11 +101,12 @@ export default function ResultScreen() {
             </View>
 
             {loading ? (
-                <ActivityIndicator
-                    size="large"
-                    color="#fff"
-                    style={styles.loadingAPI}
-                />
+                    <View style={styles.spinnerCenter}>
+                        <ActivityIndicator
+                            size="large"
+                            color={colorScheme === "dark" ? "#fff" : "light"}
+                        />
+                    </View>
             ) : result && result.nutrition ? (
                 <View style={styles.resultBox}>
                     <BlurView
@@ -144,80 +150,88 @@ export default function ResultScreen() {
                     </Text>
                 </View>
             ) : (
-                <Text style={{ color: "white", marginTop: 20 }}>
-                    No result from AI.
-                </Text>
+                <Text style={styles.noResult}>No result from AI.</Text>
             )}
         </View>
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "transparent",
-        alignItems: "center",
-    },
-    backButton: {
-        position: "absolute",
-        top: 60,
-        left: 20
-    },
-    loadingAPI: {
-        position: "absolute",
-        bottom: 140,
-        justifyContent: "center"
-    },
-    imageWrapper: {
-        position: "absolute",
-        top: 120,
-        width: "90%",
-        aspectRatio: 6 / 7,
-        borderRadius: 40,
-        overflow: "hidden"
-    },
-    image: {
-        width: "100%",
-        height: "100%",
-        aspectRatio: 6 / 7
-    },
-    resultBox: {
-        position: "absolute",
-        bottom: 40,
-        width: "90%",
-        padding: 20,
-        backgroundColor: "rgba(0,0,0,0.4)",
-        borderRadius: 20,
-        overflow: "hidden"
-    },
-    foodName: {
-        fontSize: 24,
-        fontWeight: "bold",
-        color: "white",
-        marginBottom: 20
-    },
-    nutritionRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        flexWrap: "wrap"
-    },
-    nutritionItem: {
-        width: "45%",
-        marginBottom: 16
-    },
-    nutritionLabel: {
-        color: "#aaa",
-        fontSize: 14
-    },
-    nutritionValue: {
-        color: "white",
-        fontSize: 18,
-        fontWeight: "600"
-    },
-    accuracyText: {
-        color: "#ccc",
-        fontSize: 12,
-        marginTop: 10,
-        textAlign: "right"
-    }
-});
+const getStyles = (colorScheme: "light" | "dark" | null) => {
+    const isDark = colorScheme === "dark";
+
+    return StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: "transparent",
+            alignItems: "center"
+        },
+        backButton: {
+            position: "absolute",
+            top: 42,
+            left: 20
+        },
+        spinnerCenter: {
+            position: "absolute",
+            justifyContent: "center",
+            alignItems: "center",
+            bottom: 182
+        },
+        noResult: {
+            color: isDark ? "white" : "black",
+            bottom: 182,
+            justifyContent: "center",
+            position: "absolute"
+        },
+        imageWrapper: {
+            position: "absolute",
+            top: 94,
+            width: "90%",
+            aspectRatio: 6 / 7,
+            borderRadius: 40,
+            overflow: "hidden"
+        },
+        image: {
+            width: "100%",
+            height: "100%",
+            aspectRatio: 6 / 7
+        },
+        resultBox: {
+            position: "absolute",
+            bottom: 102,
+            width: "90%",
+            padding: 20,
+            backgroundColor: isDark ? "rgba(0,0,0,0.4)" : "rgba(0,0,0,0.12)",
+            borderRadius: 20,
+            overflow: "hidden"
+        },
+        foodName: {
+            fontSize: 24,
+            fontWeight: "bold",
+            color: isDark ? "white" : "black",
+            marginBottom: 20
+        },
+        nutritionRow: {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            flexWrap: "wrap"
+        },
+        nutritionItem: {
+            width: "45%",
+            marginBottom: 16
+        },
+        nutritionLabel: {
+            color: isDark ? "#aaa" : "#444",
+            fontSize: 14
+        },
+        nutritionValue: {
+            color: isDark ? "white" : "black",
+            fontSize: 18,
+            fontWeight: "600"
+        },
+        accuracyText: {
+            color: isDark ? "#ccc" : "#555",
+            fontSize: 12,
+            textAlign: "right"
+        }
+    });
+};
