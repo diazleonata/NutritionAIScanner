@@ -17,7 +17,7 @@ export default () => ({
       SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
       API_URL: process.env.API_URL,
       eas: {
-        projectId: "915fb3fe-5903-442a-bc27-8f2ea25c53c1",
+        projectId: "0f95a52c-484b-4922-aefc-feea28099c55",
       },
     },
 
