@@ -44,7 +44,6 @@ export default function CloudEntry() {
                     tint={colorScheme === "dark" ? "dark" : "light"}
                     style={StyleSheet.absoluteFill}
                 />
-                <ActivityIndicator size="large" />
             </View>
         );
     }

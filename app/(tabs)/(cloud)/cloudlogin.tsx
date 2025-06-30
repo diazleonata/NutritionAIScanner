@@ -6,7 +6,8 @@ import {
     Pressable,
     StyleSheet,
     Alert,
-    useColorScheme
+    useColorScheme,
+    TouchableOpacity
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -14,11 +15,11 @@ import Colors from "@/constants/Colors";
 import { BlurView } from "expo-blur";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "expo-router";
+import IconApp from "@/assets/svg/icon.svg"
 
 export default function CloudLoginScreen() {
     const insets = useSafeAreaInsets();
     const theme = useColorScheme();
-
     const router = useRouter();
 
     const [email, setEmail] = useState("");
@@ -40,7 +41,7 @@ export default function CloudLoginScreen() {
             Alert.alert(
                 "Success",
                 `You have ${
-                    mode === "login" ? "signed in" : "registered"
+                    mode === "login" ? "signed in" : "signed up, verify your email!"
                 } successfully.`
             );
             router.replace("(tabs)/(cloud)");
@@ -51,89 +52,89 @@ export default function CloudLoginScreen() {
 
     return (
         <View
-            style={[styles.container(theme), { paddingTop: insets.top + 80 }]}
+            style={[
+                styles.container(theme),
+                {
+                    paddingTop: insets.top + 40,
+                    paddingBottom: insets.bottom + 40
+                }
+            ]}
         >
             <BlurView
                 intensity={80}
                 tint={theme === "dark" ? "dark" : "light"}
                 style={StyleSheet.absoluteFill}
             />
-            <View style={styles.content}>
-                <View style={styles.iconWrapper}>
-                    <Ionicons name="cloud-outline" size={40} color="white" />
+
+            <View style={styles.wrapper}>
+                <View style={styles.content}>
+                    <View style={styles.iconWrapper}>
+                        <IconApp width={60} height={60} />
+                    </View>
+
+                    <Text style={styles.title(theme)}>
+                        {mode === "login"
+                            ? "Sign in with Email"
+                            : "Create an Account"}
+                    </Text>
+
+                    <Text style={styles.subtitle(theme)}>
+                        {mode === "login"
+                            ? "Welcome back! Enter your credentials to continue."
+                            : "Enter your email and choose a password to sign up."}
+                    </Text>
+
+                    <TextInput
+                        value={email}
+                        onChangeText={setEmail}
+                        placeholder="alexandra@email.com"
+                        placeholderTextColor={
+                            theme === "dark" ? "#aaa" : "#666"
+                        }
+                        style={styles.input(theme)}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                    />
+                    <TextInput
+                        value={password}
+                        onChangeText={setPassword}
+                        placeholder="mysecretpassword"
+                        placeholderTextColor={
+                            theme === "dark" ? "#aaa" : "#666"
+                        }
+                        style={styles.input(theme)}
+                        secureTextEntry
+                    />
                 </View>
 
-                <Text style={styles.title(theme)}>
-                    {mode === "login"
-                        ? "Sign in with Email"
-                        : "Create an Account"}
-                </Text>
+                <View style={styles.footer}>
+                    <TouchableOpacity
+                        onPress={() =>
+                            setMode(mode === "login" ? "register" : "login")
+                        }
+                    >
+                        <Text style={styles.footerLink}>
+                            {mode === "login"
+                                ? "Don't have an account? Sign up"
+                                : "Already have an account? Sign in"}
+                        </Text>
+                    </TouchableOpacity>
 
-                <Text style={styles.subtitle(theme)}>
-                    {mode === "login"
-                        ? "Welcome back! Enter your credentials to continue."
-                        : "Enter your email and choose a password to register."}
-                </Text>
-
-                <TextInput
-                    value={email}
-                    onChangeText={setEmail}
-                    placeholder="alexandra@email.com"
-                    placeholderTextColor={theme === "dark" ? "#aaa" : "#666"}
-                    style={styles.input(theme)}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                />
-                <TextInput
-                    value={password}
-                    onChangeText={setPassword}
-                    placeholder="mysecretpassword"
-                    placeholderTextColor={theme === "dark" ? "#aaa" : "#666"}
-                    style={styles.input(theme)}
-                    secureTextEntry
-                />
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={handleAuth}
+                        disabled={loading}
+                    >
+                        <Text style={styles.buttonText}>
+                            {loading
+                                ? "Loading..."
+                                : mode === "login"
+                                ? "Sign in"
+                                : "Sign up"}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-
-            <View style={styles.footer}>
-                <Ionicons
-                    name="hand-left-outline"
-                    size={32}
-                    color="#0a7da3"
-                    style={styles.footerIcon}
-                />
-                <Text style={styles.footerText(theme)}>
-                    Your Cloud account is used to sign in securely and access
-                    your data.{"\n"}
-                    By continuing, you agree to our terms and data usage.
-                </Text>
-                <Text style={styles.footerLink}>
-                    See how your data is managed...
-                </Text>
-            </View>
-
-            <Pressable
-                style={styles.button}
-                onPress={handleAuth}
-                disabled={loading}
-            >
-                <Text style={styles.buttonText}>
-                    {loading
-                        ? "Loading..."
-                        : mode === "login"
-                        ? "Sign In"
-                        : "Register"}
-                </Text>
-            </Pressable>
-
-            <Pressable
-                onPress={() => setMode(mode === "login" ? "register" : "login")}
-            >
-                <Text style={[styles.footerLink, { marginBottom: 100 }]}>
-                    {mode === "login"
-                        ? "Don't have an account? Register"
-                        : "Already have an account? Sign In"}
-                </Text>
-            </Pressable>
         </View>
     );
 }
@@ -141,17 +142,24 @@ export default function CloudLoginScreen() {
 const styles = {
     container: (theme: "light" | "dark") => ({
         flex: 1,
-        backgroundColor: theme === "dark" ? "dark" : "light",
-        padding: 24,
-        justifyContent: "space-between"
+        backgroundColor: theme === "dark" ? "black" : "white",
+        paddingHorizontal: 24
     }),
+    wrapper: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        gap: 16
+    },
     content: {
-        alignItems: "center"
+        alignItems: "center",
+        width: "100%"
     },
     iconWrapper: {
-        backgroundColor: "#0a7da3",
+        backgroundColor: "green",
         borderRadius: 20,
-        padding: 18,
+        padding: 12,
         marginBottom: 20
     },
     title: (theme: "light" | "dark") => ({
@@ -166,7 +174,7 @@ const styles = {
         marginBottom: 30
     }),
     input: (theme: "light" | "dark") => ({
-        backgroundColor: theme === "dark" ? "#222" : "#f0f0f0", // more muted
+        backgroundColor: theme === "dark" ? "#222" : "#f0f0f0",
         borderRadius: 14,
         paddingHorizontal: 18,
         paddingVertical: 14,
@@ -174,31 +182,22 @@ const styles = {
         fontSize: 16,
         width: "100%",
         marginBottom: 16,
-        // Optional enhancements:
         shadowColor: theme === "dark" ? "#000" : "#ccc",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 6,
         elevation: 3
     }),
-
     footer: {
-        alignItems: "center",
-        marginBottom: 0
+        width: "100%",
+        alignItems: "flex-start",
+        gap: 16
     },
-    footerIcon: {
-        marginBottom: 25
-    },
-    footerText: (theme: "light" | "dark") => ({
-        color: theme === "dark" ? "#aaa" : "#555",
-        textAlign: "center",
-        fontSize: 13
-    }),
     footerLink: {
         color: "#0a7da3",
-        marginTop: 6,
         textDecorationLine: "underline",
-        fontSize: 13
+        fontSize: 13,
+        textAlign: "left"
     },
     button: {
         backgroundColor: "transparent",
@@ -207,7 +206,7 @@ const styles = {
         paddingVertical: 16,
         borderRadius: 12,
         alignItems: "center",
-        marginBottom: 20
+        width: "100%"
     },
     buttonText: {
         color: "#0a7da3",

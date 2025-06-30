@@ -21,7 +21,9 @@ const MAPPING = {
     "cloudy": "cloudy",
     "at.circle": "at-circle",
     "arrow.circle": "chevron-back-circle",
-    "arrow.forward": "chevron-forward"
+    "arrow.forward": "chevron-forward",
+    "bin": "trash-bin",
+    "info": "information"
 } as IconMapping;
 
 /**
