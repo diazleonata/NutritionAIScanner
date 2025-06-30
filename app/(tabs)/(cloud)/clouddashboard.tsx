@@ -90,7 +90,7 @@ export default function CloudDashboardScreen() {
 
     const handleShare = () => {
         Share.share({
-            message: "Check out this awesome AI app! https://github.com"
+            message: "Check out this awesome AI app! https://temangizi.vercel.app"
         });
     };
 
