@@ -200,17 +200,6 @@ export default function RecentScansOverlay({ visible, onClose }: Props) {
                                 </Text>
                             </BlurView>
                         )}
-                        ListEmptyComponent={
-                            <Text
-                                style={{
-                                    color: isDark ? "#aaa" : "#444",
-                                    textAlign: "center",
-                                    marginTop: 20
-                                }}
-                            >
-                                No scans found.
-                            </Text>
-                        }
                     />
                 </View>
             </Animated.View>

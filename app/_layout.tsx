@@ -10,6 +10,8 @@ import {
     ThemeProvider
 } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
+import { useBackButtonExit } from "@/hooks/useBackButtonExit";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -19,31 +21,32 @@ export default function RootLayout() {
         Inter: require("@/assets/fonts/Inter_24pt-Regular.ttf")
     });
 
+    useBackButtonExit();
+
     useEffect(() => {
         if (fontsLoaded) {
             SplashScreen.hideAsync();
         }
     }, [fontsLoaded]);
 
-    // don’t render the navigator until everything’s ready
-    if (!fontsLoaded) {
-        return null;
-    }
+    if (!fontsLoaded) return null;
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
-            <ThemeProvider
-                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-            >
-                <Stack initialRouteName="(tabs)">
-                    <Stack.Screen
-                        name="(tabs)"
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen name="+not-found" />
-                </Stack>
-            </ThemeProvider>
-            <StatusBar style="auto" />
+            <SafeAreaProvider>
+                <ThemeProvider
+                    value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+                >
+                    <Stack initialRouteName="(tabs)">
+                        <Stack.Screen
+                            name="(tabs)"
+                            options={{ headerShown: false }}
+                        />
+                        <Stack.Screen name="+not-found" />
+                    </Stack>
+                </ThemeProvider>
+                <StatusBar style="auto" />
+            </SafeAreaProvider>
         </GestureHandlerRootView>
     );
 }

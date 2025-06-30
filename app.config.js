@@ -3,12 +3,12 @@ import 'dotenv/config';
 /** @type {import('@expo/config').ExpoConfig} */
 export default () => ({
   expo: {
-    name: "NutritionAIScanner",
-    slug: "nutritionaiscanner",
-    version: "0.5.0",
+    name: "Teman Gizi",
+    slug: "temangizi",
+    version: "1.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
-    scheme: "nutritionaiscanner",
+    scheme: "temangizi",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
 
@@ -23,10 +23,10 @@ export default () => ({
 
     android: {
       adaptiveIcon: {
-        foregroundImage: "./assets/images/adaptive-icon.png",
+        foregroundImage: "./assets/images/icon.png",
         backgroundColor: "#ffffff",
       },
-      package: "com.leonatadiaz.nutritionaiscanner",
+      package: "com.ninetynines.temangizi",
       permissions: ["android.permission.CAMERA"],
     },
 
@@ -37,10 +37,10 @@ export default () => ({
       [
         "expo-splash-screen",
         {
-          image: "./assets/images/splash-icon.png",
+          image: "./assets/images/icon.png",
           imageWidth: 200,
           resizeMode: "contain",
-          backgroundColor: "#ffffff",
+          backgroundColor: "green",
         },
       ],
       [

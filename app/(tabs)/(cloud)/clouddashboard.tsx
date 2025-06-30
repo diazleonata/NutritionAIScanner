@@ -138,7 +138,7 @@ export default function CloudDashboardScreen() {
                     tint={colorScheme === "dark" ? "dark" : "light"}
                     style={StyleSheet.absoluteFill}
                 />
-                <ActivityIndicator size="large" />
+                <ActivityIndicator size="large" color={colorScheme === "dark" ? "#fff" : "light"}/>
             </View>
         );
     }
@@ -197,9 +197,9 @@ export default function CloudDashboardScreen() {
                 ))}
 
                 {/* Sign Out */}
-                <Pressable onPress={handleSignOut} style={styles.signOutButton}>
+                <TouchableOpacity onPress={handleSignOut} style={styles.signOutButton}>
                     <Text style={styles.signOutText}>Sign Out</Text>
-                </Pressable>
+                </TouchableOpacity>
             </ScrollView>
 
             <RecentScans

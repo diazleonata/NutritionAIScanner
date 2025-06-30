@@ -53,7 +53,7 @@ export default function CustomTab({
                 ? "camera"
                 : routeName === "(cloud)"
                 ? "cloudy"
-                : "at.circle";
+                : "info";
 
         return (
             <HapticTab
@@ -77,7 +77,7 @@ export default function CustomTab({
             <View style={[styles.pill, styles.leftPill]}>
                 <BlurView
                     tint={blurTint}
-                    intensity={100}
+                    intensity={50}
                     style={StyleSheet.absoluteFill}
                     experimentalBlurMethod="dimezisBlurView"
                 />
@@ -92,7 +92,7 @@ export default function CustomTab({
             <View style={[styles.pill, styles.rightPill]}>
                 <BlurView
                     tint= {blurTint}
-                    intensity={100}
+                    intensity={50}
                     style={StyleSheet.absoluteFill}
                     experimentalBlurMethod="dimezisBlurView"
                 />
