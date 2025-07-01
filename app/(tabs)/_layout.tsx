@@ -6,8 +6,8 @@ import CustomTab from "@/components/CustomTab";
 
 export default function TabLayout() {
     const colorScheme = useColorScheme();
-    const blurTint = colorScheme === "dark" ? "dark" : "light"; // for BlurView
-    const tint = Colors[colorScheme].tabIconSelected; // actual color
+    const blurTint = colorScheme === "dark" ? "dark" : "light";
+    const tint = Colors[colorScheme].tabIconSelected;
     const defaultIconColor = Colors[colorScheme].tabIconDefault;
 
     return (
@@ -22,7 +22,6 @@ export default function TabLayout() {
                     colorScheme={colorScheme}
                 />
             )}
-            screenListeners={{ tabPress: e => e.preventDefault() }}
             initialRouteName="(scan)"
         >
             <Tabs.Screen name="(scan)" />
