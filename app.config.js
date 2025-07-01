@@ -39,7 +39,18 @@ export default () => ({
                         "Allow $(PRODUCT_NAME) to access your camera to scan nutrition labels."
                 }
             ],
-            "expo-web-browser"
+            "expo-web-browser",
+            [
+                "expo-build-properties",
+                {
+                    android: {
+                        enableProguardInReleaseBuilds: true,
+                        enableShrinkResourcesInReleaseBuilds: true,
+
+                      useLegacyPackaging: true
+                    }
+                }
+            ],
         ],
 
         experiments: {
