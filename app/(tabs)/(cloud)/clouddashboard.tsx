@@ -4,7 +4,6 @@ import {
     Text,
     StyleSheet,
     ScrollView,
-    Pressable,
     Image,
     useColorScheme,
     Share,
@@ -40,7 +39,7 @@ export default function CloudDashboardScreen() {
 
             setLoading(false);
 
-            // Add 300ms artificial delay before render
+            // Add 300ms delay before render
             setTimeout(() => {
                 setReady(true);
             }, 300);
@@ -72,21 +71,19 @@ export default function CloudDashboardScreen() {
     useEffect(() => {
         let isMounted = true;
 
-        fetchRecentScans(); // Initial fetch
+        fetchRecentScans(); 
 
         const interval = setInterval(() => {
             if (isMounted) {
                 fetchRecentScans();
             }
-        }, 10000); // every 10 seconds
+        }, 10000); // sync database every 10 seconds
 
         return () => {
             isMounted = false;
             clearInterval(interval);
         };
     }, []);
-
-    // const handleProfile = () => {};
 
     const handleShare = () => {
         Share.share({

@@ -1,5 +1,4 @@
 import { Stack } from "expo-router";
-import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -13,23 +12,9 @@ import { StatusBar } from "expo-status-bar";
 import { useBackButtonExit } from "@/hooks/useBackButtonExit";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-SplashScreen.preventAutoHideAsync();
-
 export default function RootLayout() {
     const colorScheme = useColorScheme();
-    const [fontsLoaded] = useFonts({
-        Inter: require("@/assets/fonts/Inter_24pt-Regular.ttf")
-    });
-
     useBackButtonExit();
-
-    useEffect(() => {
-        if (fontsLoaded) {
-            SplashScreen.hideAsync();
-        }
-    }, [fontsLoaded]);
-
-    if (!fontsLoaded) return null;
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>

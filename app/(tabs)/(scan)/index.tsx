@@ -11,7 +11,6 @@ import {
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { BlurView } from "expo-blur";
 import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
-import { uploadImageToSupabase } from "@/lib/uploadToSupabase";
 import * as FileSystem from "expo-file-system";
 
 export default function IndexScreen() {
@@ -28,7 +27,7 @@ export default function IndexScreen() {
         useCallback(() => {
             const timeout = setTimeout(() => {
                 setIsCameraActive(true);
-            }, 150); // small delay helps
+            }, 150);
             return () => {
                 clearTimeout(timeout);
                 setIsCameraActive(false);
@@ -44,20 +43,6 @@ export default function IndexScreen() {
         }
     }, [permission]);
 
-    if (!permission?.granted) {
-        return (
-            <View style={styles.center}>
-                <Text style={styles.permissionText}>No access to camera</Text>
-                <TouchableOpacity
-                    onPress={requestPermission}
-                    style={styles.permissionButton}
-                >
-                    <Text>Grant</Text>
-                </TouchableOpacity>
-            </View>
-        );
-    }
-
     const takePhoto = async () => {
         if (!cameraRef.current) return;
 
@@ -65,7 +50,7 @@ export default function IndexScreen() {
             const photo = await cameraRef.current.takePictureAsync({
                 quality: 0.8
             });
-            // Copy to app's document directory (Expo Go can access this)
+            
             const fileName = `photo_${Date.now()}.jpg`;
             const newPath = FileSystem.documentDirectory + fileName;
 
@@ -161,16 +146,5 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center"
-    },
-    permissionButton: {
-        marginTop: 12,
-        padding: 10,
-        backgroundColor: "white",
-        borderRadius: 8,
-        fontWeight: "bold"
-    },
-    permissionText: {
-        color: "white",
-        fontWeight: "bold"
     }
 });
