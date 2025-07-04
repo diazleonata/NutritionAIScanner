@@ -5,10 +5,10 @@ import {
     StyleSheet,
     Linking,
     TouchableOpacity,
-    ScrollView
+    ScrollView,
+    useColorScheme
 } from "react-native";
 import { BlurView } from "expo-blur";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import Constants from "expo-constants";
 import { Ionicons, FontAwesome, Feather } from "@expo/vector-icons";
 import IconApp from "@/assets/svg/icon.svg";

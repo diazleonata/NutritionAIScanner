@@ -157,7 +157,7 @@ export default function ResultScreen() {
             <View style={styles.headerRow}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <IconSymbol
-                        name="arrow.circle"
+                        name="arrow.back.bg"
                         size={40}
                         color={colorScheme === "dark" ? "white" : "black"}
                     />

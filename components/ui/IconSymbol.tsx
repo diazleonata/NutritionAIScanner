@@ -20,10 +20,13 @@ const MAPPING = {
     "camera": "camera",
     "cloudy": "cloudy",
     "at.circle": "at-circle",
-    "arrow.circle": "chevron-back-circle",
+    "arrow.back.bg": "chevron-back-circle",
     "arrow.forward": "chevron-forward",
     "bin": "trash-bin",
-    "info": "information"
+    "info": "information",
+    "archive": "archive",
+    "share": "share",
+    "logout": "log-out",
 } as IconMapping;
 
 /**

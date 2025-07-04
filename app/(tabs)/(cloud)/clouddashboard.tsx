@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
     View,
     Text,
@@ -15,7 +15,8 @@ import { useRouter } from "expo-router";
 import { BlurView } from "expo-blur";
 import Constants from "expo-constants";
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import RecentScans from "@/app/(tabs)/(cloud)/recentscans";
+import { RecentScansModal } from "@/components/RecentScansModal";
+import { Modalize } from "react-native-modalize";
 
 export default function CloudDashboardScreen() {
     const router = useRouter();
@@ -23,12 +24,12 @@ export default function CloudDashboardScreen() {
     const styles = getStyles(colorScheme);
 
     const [userEmail, setUserEmail] = useState("");
-    const [showRecent, setShowRecent] = useState(false);
     const [recentScans, setRecentScans] = useState<
         { id: string; food_name: string; calories: string }[]
     >([]);
     const [loading, setLoading] = useState(true);
     const [ready, setReady] = useState(false);
+    const modalRef = useRef<Modalize>(null);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -58,8 +59,7 @@ export default function CloudDashboardScreen() {
             .from("food_results")
             .select("id, food_name, calories, created_at")
             .eq("user_id", user.id)
-            .order("created_at", { ascending: false })
-            .limit(2);
+            .order("created_at", { ascending: false });
 
         if (!error) {
             setRecentScans(data || []);
@@ -71,7 +71,7 @@ export default function CloudDashboardScreen() {
     useEffect(() => {
         let isMounted = true;
 
-        fetchRecentScans(); 
+        fetchRecentScans();
 
         const interval = setInterval(() => {
             if (isMounted) {
@@ -87,7 +87,8 @@ export default function CloudDashboardScreen() {
 
     const handleShare = () => {
         Share.share({
-            message: "Check out this awesome AI app! https://temangizi.vercel.app"
+            message:
+                "Check out this awesome AI app! https://temangizi.vercel.app"
         });
     };
 
@@ -97,24 +98,29 @@ export default function CloudDashboardScreen() {
     };
     const sections = [
         {
-            title: "Recent AI Scans",
-            data: recentScans.map(
-                scan => `${scan.food_name} • ${scan.calories}`
-            )
+            title: "Recent scans",
+            icon: ["archive"]
         },
         {
-            title: "Share this app",
-            data: ["Tell your friends about this app, help us much!"]
+            title: "Tell a friend",
+            icon: ["share"]
+        },
+        {
+            title: "Log out",
+            icon: ["logout"]
         }
     ];
 
     const handleSectionPress = (section: (typeof sections)[number]) => {
         switch (section.title) {
-            case "Share this app":
+            case "Recent scans":
+                modalRef.current?.open();
+                break;
+            case "Tell a friend":
                 handleShare();
                 break;
-            case "Recent AI Scans":
-                setShowRecent(true);
+            case "Log out":
+                handleSignOut()
                 break;
             default:
                 console.log("No action set for", section.title);
@@ -135,7 +141,10 @@ export default function CloudDashboardScreen() {
                     tint={colorScheme === "dark" ? "dark" : "light"}
                     style={StyleSheet.absoluteFill}
                 />
-                <ActivityIndicator size="large" color={colorScheme === "dark" ? "#fff" : "light"}/>
+                <ActivityIndicator
+                    size="large"
+                    color={colorScheme === "dark" ? "#fff" : "light"}
+                />
             </View>
         );
     }
@@ -167,42 +176,41 @@ export default function CloudDashboardScreen() {
 
                 {/* Sections */}
                 {sections.map((section, i) => (
-                    <View key={i} style={styles.card}>
+                    <TouchableOpacity
+                        key={i}
+                        style={styles.card}
+                        onPress={() => handleSectionPress(section)}
+                    >
+                        {section.icon.map((item, idx) => (
+                            <View key={item + idx} style={styles.sectionIcon}>
+                                <IconSymbol
+                                    name={item}
+                                    size={32}
+                                    color={
+                                        colorScheme === "dark"
+                                            ? "white"
+                                            : "black"
+                                    }
+                                />
+                            </View>
+                        ))}
                         <Text style={styles.sectionTitle}>{section.title}</Text>
-
-                        <TouchableOpacity
-                            onPress={() => handleSectionPress(section)}
-                            style={[styles.arrowForward, { paddingTop: 8 }]}
-                        >
+                        <View style={styles.arrowForward}>
                             <IconSymbol
                                 name="arrow.forward"
-                                size={16}
+                                size={24}
                                 color={
                                     colorScheme === "dark"
                                         ? "rgba(255,255,255,0.2)"
                                         : "rgba(0,0,0,0.2)"
                                 }
                             />
-                        </TouchableOpacity>
-
-                        {section.data.map((item, idx) => (
-                            <View key={idx} style={styles.row}>
-                                <Text style={styles.rowText}>{item}</Text>
-                            </View>
-                        ))}
-                    </View>
+                        </View>
+                    </TouchableOpacity>
                 ))}
-
-                {/* Sign Out */}
-                <TouchableOpacity onPress={handleSignOut} style={styles.signOutButton}>
-                    <Text style={styles.signOutText}>Sign Out</Text>
-                </TouchableOpacity>
             </ScrollView>
 
-            <RecentScans
-                visible={showRecent}
-                onClose={() => setShowRecent(false)}
-            />
+            <RecentScansModal ref={modalRef} data={recentScans} />
         </View>
     );
 }
@@ -257,20 +265,25 @@ function getStyles(colorScheme: string | null) {
             right: 10
         },
         card: {
-            marginBottom: 20,
+            flexDirection: "row",
+            alignItems: "center",
             backgroundColor: isDark
-                ? "rgba(255,255,255,0.04)"
-                : "rgba(0,0,0,0.04)",
+                ? "rgba(255,255,255,0.05)"
+                : "rgba(0,0,0,0.05)",
+            padding: 12,
             borderRadius: 16,
-            overflow: "hidden"
+            marginBottom: 12
+        },
+        sectionIcon: {
+            marginLeft: 12,
+            borderRadius: 14,
+            alignSelf: "center"
         },
         sectionTitle: {
-            fontSize: 13,
-            fontWeight: "500",
-            color: isDark ? "#aaa" : "#666",
-            paddingHorizontal: 16,
-            paddingTop: 8,
-            paddingBottom: 4
+            fontSize: 16,
+            fontWeight: "600",
+            color: isDark ? "white" : "black",
+            marginLeft: 12
         },
         row: {
             paddingVertical: 14,
@@ -281,21 +294,6 @@ function getStyles(colorScheme: string | null) {
         rowText: {
             fontSize: 16,
             color: isDark ? "white" : "black"
-        },
-        signOutButton: {
-            marginBottom: 20,
-            paddingHorizontal: 16,
-            paddingVertical: 12,
-            backgroundColor: "transparent",
-            borderRadius: 12,
-            borderColor: "#FF3B30",
-            borderWidth: 1
-        },
-        signOutText: {
-            fontSize: 16,
-            fontWeight: "600",
-            color: "#FF3B30",
-            alignSelf: "center"
         }
     });
 }

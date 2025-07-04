@@ -1,9 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
-import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { View, ActivityIndicator, StyleSheet, useColorScheme } from "react-native";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "expo-router";
 import { BlurView } from "expo-blur";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function CloudEntry() {
