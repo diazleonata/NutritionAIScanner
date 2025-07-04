@@ -25,9 +25,6 @@ export default function CloudDashboardScreen() {
     const styles = getStyles(colorScheme);
 
     const [userEmail, setUserEmail] = useState("");
-    const [recentScans, setRecentScans] = useState<
-        { id: string; food_name: string; calories: string }[]
-    >([]);
     const [loading, setLoading] = useState(true);
     const [ready, setReady] = useState(false);
     const modalRef = useRef<Modalize>(null);
@@ -47,43 +44,6 @@ export default function CloudDashboardScreen() {
             }, 300);
         };
         fetchUser();
-    }, []);
-
-    const fetchRecentScans = async () => {
-        const {
-            data: { user },
-            error: userError
-        } = await supabase.auth.getUser();
-        if (userError || !user) return;
-
-        const { data, error } = await supabase
-            .from("food_results")
-            .select("id, food_name, calories, created_at")
-            .eq("user_id", user.id)
-            .order("created_at", { ascending: false });
-
-        if (!error) {
-            setRecentScans(data || []);
-        } else {
-            console.error("Failed to fetch recent scans:", error.message);
-        }
-    };
-
-    useEffect(() => {
-        let isMounted = true;
-
-        fetchRecentScans();
-
-        const interval = setInterval(() => {
-            if (isMounted) {
-                fetchRecentScans();
-            }
-        }, 10000); // sync database every 10 seconds
-
-        return () => {
-            isMounted = false;
-            clearInterval(interval);
-        };
     }, []);
 
     const handleShare = () => {
@@ -211,7 +171,7 @@ export default function CloudDashboardScreen() {
                 ))}
             </ScrollView>
 
-            <RecentScansModal ref={modalRef} data={recentScans} />
+            <RecentScansModal ref={modalRef} />
         </View>
     );
 }

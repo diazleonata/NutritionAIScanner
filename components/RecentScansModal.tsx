@@ -9,8 +9,6 @@ import {
 } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { BlurView } from "expo-blur";
-import { FlatList } from "react-native-gesture-handler";
-import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { supabase } from "@/lib/supabase";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -59,37 +57,32 @@ export const RecentScansModal = forwardRef<Modalize, Props>((_, ref) => {
         fetchScans();
     }, []);
 
-    const swipeGesture = Gesture.Pan()
-        .onEnd(e => {
-            if (e.translationY > 80) {
-                ref?.current?.close();
-            }
-        });
-
     const renderItem = ({ item }: { item: Scan }) => (
-        <BlurView
-            intensity={40}
-            tint={isDark ? "dark" : "light"}
-            style={styles.card}
+        <View style={[styles.card, {backgroundColor: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.05)"}]}
         >
             <Text style={[styles.food, { color: isDark ? "#fff" : "#000" }]}>
                 {item.food_name}
             </Text>
-            <Text style={[styles.nutrition, { color: isDark ? "#ccc" : "#333" }]}>
-                Calories: {item.calories} | Fat: {item.fat} | Carbs: {item.carbs} | Protein: {item.protein}
+            <Text
+                style={[styles.nutrition, { color: isDark ? "#ccc" : "#333" }]}
+            >
+                Cal: {item.calories} | Fat: {item.fat} | Carbs: {item.carbs} | Protein: {item.protein}
             </Text>
-            <Text style={[styles.timestamp, { color: isDark ? "#aaa" : "#666" }]}>
+            <Text
+                style={[styles.timestamp, { color: isDark ? "#aaa" : "#666" }]}
+            >
                 {new Date(item.created_at).toLocaleString()}
             </Text>
-        </BlurView>
+        </View>
     );
 
     return (
         <Modalize
             ref={ref}
-            modalHeight={SCREEN_HEIGHT * 0.65}
+            modalHeight={SCREEN_HEIGHT * 0.70}
             panGestureEnabled={false}
-            handleStyle={{ height: 0 }}
+            withHandle
+            handleStyle={styles.handle}
             modalStyle={[
                 styles.modal,
                 { backgroundColor: isDark ? "#1c1c1e" : "#f9f9f9" }
@@ -98,40 +91,30 @@ export const RecentScansModal = forwardRef<Modalize, Props>((_, ref) => {
                 data: scans,
                 keyExtractor: item => item.id,
                 renderItem,
-                ListHeaderComponent: () => (
-                    <>
-                        {/* Custom draggable pill gesture area */}
-                        <GestureDetector gesture={swipeGesture}>
-                            <View style={styles.pillArea}>
-                                <View style={styles.handle} />
-                            </View>
-                        </GestureDetector>
-                        {/* Title or Loading */}
-                        {loading ? (
-                            <View style={{ marginTop: 32 }}>
-                                <ActivityIndicator color={isDark ? "#fff" : "#000"} />
-                            </View>
-                        ) : (
-                            <Text
-                                style={[
-                                    styles.title,
-                                    {
-                                        color: isDark ? "#fff" : "#000",
-                                        textAlign: "center",
-                                        marginVertical: 12
-                                    }
-                                ]}
-                            >
-                                Recent AI Scans
-                            </Text>
-                        )}
-                    </>
-                ),
+                showsVerticalScrollIndicator: false,
+                ListHeaderComponent: () =>
+                    loading ? (
+                        <View style={{ marginTop: 32 }}>
+                            <ActivityIndicator color={isDark ? "#fff" : "#000"} />
+                        </View>
+                    ) : (
+                        <Text
+                            style={[
+                                styles.title,
+                                {
+                                    color: isDark ? "#fff" : "#000",
+                                    textAlign: "center",
+                                    marginVertical: 12
+                                }
+                            ]}
+                        >
+                            Recent AI Scans
+                        </Text>
+                    ),
                 contentContainerStyle: {
                     paddingHorizontal: 16,
                     paddingBottom: 24
-                },
-                showsVerticalScrollIndicator: false
+                }
             }}
         />
     );
@@ -142,16 +125,13 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20
     },
-    pillArea: {
-        alignItems: "center",
-        paddingTop: 8,
-        paddingBottom: 4
-    },
     handle: {
         width: 40,
         height: 6,
         borderRadius: 3,
-        backgroundColor: "#ccc"
+        backgroundColor: "#ccc",
+        alignSelf: "center",
+        marginVertical: 8
     },
     title: {
         fontSize: 18,
