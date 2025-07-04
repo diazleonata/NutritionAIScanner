@@ -17,6 +17,7 @@ import Constants from "expo-constants";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { RecentScansModal } from "@/components/RecentScansModal";
 import { Modalize } from "react-native-modalize";
+import { recentScansModalRef } from "@/lib/globalRefs";
 
 export default function CloudDashboardScreen() {
     const router = useRouter();
@@ -114,7 +115,7 @@ export default function CloudDashboardScreen() {
     const handleSectionPress = (section: (typeof sections)[number]) => {
         switch (section.title) {
             case "Recent scans":
-                modalRef.current?.open();
+                recentScansModalRef.current?.open()
                 break;
             case "Tell a friend":
                 handleShare();
