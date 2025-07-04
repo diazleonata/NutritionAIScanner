@@ -245,7 +245,7 @@ export default function ResultScreen() {
                         </View>
 
                         <Text style={styles.accuracyText}>
-                            Accuracy: {(result.akurasi * 100).toFixed(1)}%
+                            Confidence: {(result.akurasi * 100).toFixed(1)}%
                         </Text>
                     </View>
                 ) : (

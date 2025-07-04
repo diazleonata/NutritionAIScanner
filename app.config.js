@@ -51,6 +51,9 @@ export default () => ({
                     }
                 }
             ],
+            [
+            	withAbiFilters, { abiFilters: ['arm64-v8a'] }
+            ]
         ],
 
         experiments: {
