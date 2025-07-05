@@ -1,4 +1,5 @@
 import "dotenv/config";
+import withAbiFilters from "./plugins/withAbiFilters";
 
 /** @type {import('@expo/config').ExpoConfig} */
 export default () => ({
